@@ -1,0 +1,30 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Tool caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tox/
+.nox/
+
+# Coverage and test output
+.coverage
+.coverage.*
+htmlcov/
+
+# Packaging artifacts
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Jupyter and local settings
+.ipynb_checkpoints/

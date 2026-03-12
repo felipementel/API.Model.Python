@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "usuarios-api"
+version = "0.1.0"
+description = "FastAPI CRUD for usuarios using Ports and Adapters"
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "fastapi>=0.135.1,<1.0",
+    "uvicorn>=0.41.0,<1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=26.3.0,<27.0",
+    "httpx>=0.28.1,<1.0",
+    "isort>=8.0.1,<9.0",
+    "mypy>=1.19.1,<2.0",
+    "pytest>=9.0.2,<10.0",
+    "pytest-cov>=7.0.0,<8.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 88
+target-version = ["py314"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+py_version = 314
+
+[tool.mypy]
+python_version = "3.14"
+warn_unused_configs = true
+check_untyped_defs = true
+disallow_incomplete_defs = true
+no_implicit_optional = true
+pretty = true
+show_error_codes = true
