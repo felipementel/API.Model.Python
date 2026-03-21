@@ -7,7 +7,7 @@ name = "usuarios-api"
 version = "0.1.0"
 description = "FastAPI CRUD for usuarios using Ports and Adapters"
 readme = "README.md"
-requires-python = ">=3.14,<3.15"
+requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.135.1,<1.0",
     "uvicorn>=0.41.0,<1.0",
