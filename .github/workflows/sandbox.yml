@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+run-name: "${{ github.actor }} - ${{ github.run_id }}"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+  workflow_dispatch:
+    inputs:
+      buildMode:
+        description: "Qual ação deseja fazer?"
+        required: true
+        default: 'Build'
+        type: choice
+        options:
+          - Build
+          - Build + Tag Validation
+          - Build + Tag Validation + Deploy
+      environments:
+        description: "Selecione o ambiente de implantação"
+        required: true
+        default: 'DEV'
+        type: environment
+
+
+jobs:
+  build:
+    uses: felipementel/reusable-workflows/.github/workflows/python-sandbox-api-build.yml@main
+    with:
+      buildMode: 'Build + Push'
+      environment: 'DEV'
+      projectName: 'minha-api'
+      imageName: 'minha-api'
+      registryUsername: 'greennexus-core'   # org no GHCR
+    secrets:
+      GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+
+  deploy:
+    needs: [build]
+    if: needs.build.outputs.image-exists == 'false'
+    uses: felipementel/reusable-workflows/.github/workflows/python-sandbox-api-deploy-aca.yml@main
+    with:
+      environment: 'DEV'
+      tagVersion: ${{ needs.build.outputs.tag-version }}
+      imageName: 'minha-api'
+      registryUsername: 'greennexus-core'
+      azureRgBase: ${{ vars.AZURE_RG }}
+      acaeBaseName: ${{ vars.AZURE_ACAE_BASE }}
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
