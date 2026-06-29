@@ -1,3 +1,5 @@
+"""Root, documentation, and API explorer routes."""
+
 from fastapi import APIRouter, Request
 from fastapi.openapi.docs import get_scalar_api_reference
 from fastapi.responses import HTMLResponse
@@ -14,7 +16,8 @@ _ROOT_HTML_TEMPLATE = """\
   <style>
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #f5f5f5;
       display: flex;
       justify-content: center;
@@ -68,9 +71,15 @@ _ROOT_HTML_TEMPLATE = """\
     <div class="section">
       <div class="section-title">Documentação</div>
       <ul>
-        <li><a href="/scalar">Scalar UI <span class="badge">interactive</span></a></li>
+        <li>
+          <a href="/scalar">Scalar UI
+          <span class="badge">interactive</span></a>
+        </li>
         <li><a href="/docs">Swagger UI</a></li>
-        <li><a href="/openapi.json">OpenAPI Spec <span class="badge">JSON</span></a></li>
+        <li>
+          <a href="/openapi.json">OpenAPI Spec
+          <span class="badge">JSON</span></a>
+        </li>
       </ul>
     </div>
 
@@ -88,12 +97,14 @@ _ROOT_HTML_TEMPLATE = """\
 
 @router.get("/", response_class=HTMLResponse)
 async def root(request: Request) -> HTMLResponse:
+    """Serve the API landing page with links to docs and health probes."""
     version = getattr(request.app, "version", "0.1.0")
     return HTMLResponse(content=_ROOT_HTML_TEMPLATE.format(version=version))
 
 
 @router.get("/scalar", response_class=HTMLResponse)
 async def scalar_ui(request: Request) -> HTMLResponse:
+    """Serve the Scalar interactive API explorer."""
     return get_scalar_api_reference(
         openapi_url=str(request.app.openapi_url),
         title=request.app.title,

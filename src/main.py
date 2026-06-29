@@ -1,3 +1,5 @@
+"""FastAPI application factory for the Usuarios API."""
+
 from fastapi import FastAPI
 import uvicorn
 
@@ -11,11 +13,13 @@ from application.services.user_service import UserService
 
 
 def build_user_service() -> UserService:
+    """Instantiate a UserService backed by an in-memory repository."""
     repository = InMemoryUserRepository()
     return UserService(repository=repository)
 
 
 def create_app(user_service: UserService | None = None) -> FastAPI:
+    """Create and configure the FastAPI application instance."""
     app = FastAPI(
         title="Usuarios API",
         version="0.1.0",

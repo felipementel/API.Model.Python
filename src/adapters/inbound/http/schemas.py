@@ -1,3 +1,5 @@
+"""Pydantic request and response schemas for the Usuarios API."""
+
 from datetime import date
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -7,6 +9,8 @@ from domain.user import User
 
 
 class UserRequest(BaseModel):
+    """Schema for creating or updating a user."""
+
     model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
 
     id: int = Field(gt=0)
@@ -16,6 +20,7 @@ class UserRequest(BaseModel):
     telefones: list[str] = Field(default_factory=list)
 
     def to_command(self) -> SaveUserCommand:
+        """Convert this request schema to a SaveUserCommand."""
         return SaveUserCommand(
             id=self.id,
             nome=self.nome,
@@ -26,6 +31,8 @@ class UserRequest(BaseModel):
 
 
 class UserResponse(BaseModel):
+    """Schema for returning user data in API responses."""
+
     model_config = ConfigDict(populate_by_name=True)
 
     id: int
@@ -36,6 +43,7 @@ class UserResponse(BaseModel):
 
     @classmethod
     def from_domain(cls, user: User) -> "UserResponse":
+        """Build a UserResponse from a domain User entity."""
         return cls(
             id=user.id,
             nome=user.nome,

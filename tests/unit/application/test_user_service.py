@@ -1,3 +1,5 @@
+"""Unit tests for the UserService application service."""
+
 from datetime import date
 
 import pytest
@@ -11,6 +13,7 @@ from domain.errors import UserAlreadyExistsError, UserNotFoundError
 
 
 def make_command(*, user_id: int = 1, nome: str = "Maria") -> SaveUserCommand:
+    """Build a default SaveUserCommand for use in tests."""
     return SaveUserCommand(
         id=user_id,
         nome=nome,
@@ -21,6 +24,7 @@ def make_command(*, user_id: int = 1, nome: str = "Maria") -> SaveUserCommand:
 
 
 def test_create_user_and_list_users() -> None:
+    """Creating a user persists it and makes it visible in list."""
     service = UserService(repository=InMemoryUserRepository())
 
     created_user = service.create_user(make_command())
@@ -33,6 +37,7 @@ def test_create_user_and_list_users() -> None:
 
 
 def test_create_user_with_existing_id_raises_error() -> None:
+    """Creating a user with an existing ID raises UserAlreadyExistsError."""
     service = UserService(repository=InMemoryUserRepository())
     command = make_command()
     service.create_user(command)
@@ -42,6 +47,7 @@ def test_create_user_with_existing_id_raises_error() -> None:
 
 
 def test_update_user_replaces_existing_data() -> None:
+    """Updating a user replaces all mutable fields while preserving ID."""
     service = UserService(repository=InMemoryUserRepository())
     service.create_user(make_command())
 
@@ -63,6 +69,7 @@ def test_update_user_replaces_existing_data() -> None:
 
 
 def test_delete_unknown_user_raises_error() -> None:
+    """Deleting a non-existent user raises UserNotFoundError."""
     service = UserService(repository=InMemoryUserRepository())
 
     with pytest.raises(UserNotFoundError):
