@@ -45,6 +45,8 @@ py_version = 314
 
 [tool.mypy]
 python_version = "3.14"
+mypy_path = ["src"]
+explicit_package_bases = true
 warn_unused_configs = true
 check_untyped_defs = true
 disallow_incomplete_defs = true

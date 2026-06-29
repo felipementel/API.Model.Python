@@ -1,7 +1,7 @@
 """FastAPI application factory for the Usuarios API."""
 
-from fastapi import FastAPI
 import uvicorn
+from fastapi import FastAPI
 
 from adapters.inbound.http.routes.health import router as health_router
 from adapters.inbound.http.routes.root import router as root_router

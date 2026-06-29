@@ -1,7 +1,9 @@
 """Root, documentation, and API explorer routes."""
 
 from fastapi import APIRouter, Request
-from fastapi.openapi.docs import get_scalar_api_reference
+from fastapi.openapi.docs import (  # type: ignore[attr-defined]
+    get_scalar_api_reference,
+)
 from fastapi.responses import HTMLResponse
 
 router = APIRouter(include_in_schema=False)
