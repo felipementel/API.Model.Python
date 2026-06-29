@@ -11,9 +11,7 @@ from main import create_app
 
 def test_health_endpoints_report_application_status() -> None:
     """Health endpoints return correct status codes and bodies."""
-    app = create_app(
-        user_service=UserService(repository=InMemoryUserRepository())
-    )
+    app = create_app(user_service=UserService(repository=InMemoryUserRepository()))
     client = TestClient(app)
 
     live_response = client.get("/health/live")
@@ -30,9 +28,7 @@ def test_health_endpoints_report_application_status() -> None:
 
 def test_readiness_returns_503_when_service_is_not_available() -> None:
     """Readiness endpoint returns 503 when user service is None."""
-    app = create_app(
-        user_service=UserService(repository=InMemoryUserRepository())
-    )
+    app = create_app(user_service=UserService(repository=InMemoryUserRepository()))
     app.state.user_service = None
     client = TestClient(app)
 
@@ -44,9 +40,7 @@ def test_readiness_returns_503_when_service_is_not_available() -> None:
 
 def test_users_api_crud_flow() -> None:
     """Users API supports full create, read, update, and delete flow."""
-    app = create_app(
-        user_service=UserService(repository=InMemoryUserRepository())
-    )
+    app = create_app(user_service=UserService(repository=InMemoryUserRepository()))
     client = TestClient(app)
 
     create_response = client.post(
@@ -106,9 +100,7 @@ def test_users_api_crud_flow() -> None:
 
 def test_users_api_returns_409_for_duplicate_id() -> None:
     """Creating a user with a duplicate ID returns HTTP 409."""
-    app = create_app(
-        user_service=UserService(repository=InMemoryUserRepository())
-    )
+    app = create_app(user_service=UserService(repository=InMemoryUserRepository()))
     client = TestClient(app)
 
     payload = {
@@ -128,9 +120,7 @@ def test_users_api_returns_409_for_duplicate_id() -> None:
 
 def test_users_api_returns_404_for_unknown_user() -> None:
     """Reading, updating, or deleting an unknown user returns HTTP 404."""
-    app = create_app(
-        user_service=UserService(repository=InMemoryUserRepository())
-    )
+    app = create_app(user_service=UserService(repository=InMemoryUserRepository()))
     client = TestClient(app)
 
     get_response = client.get("/usuarios/999")
