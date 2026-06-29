@@ -9,8 +9,8 @@ description = "FastAPI CRUD for usuarios using Ports and Adapters"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "fastapi>=0.135.1,<1.0",
-    "uvicorn>=0.41.0,<1.0",
+    "fastapi>=0.138.1",
+    "uvicorn>=0.49.0",
 ]
 
 [project.optional-dependencies]
@@ -42,6 +42,9 @@ target-version = ["py314"]
 profile = "black"
 line_length = 88
 py_version = 314
+
+[tool.flake8]
+max-line-length = 88
 
 [tool.mypy]
 python_version = "3.14"

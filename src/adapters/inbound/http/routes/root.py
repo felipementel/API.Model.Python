@@ -1,9 +1,6 @@
 """Root, documentation, and API explorer routes."""
 
 from fastapi import APIRouter, Request
-from fastapi.openapi.docs import (  # type: ignore[attr-defined]
-    get_scalar_api_reference,
-)
 from fastapi.responses import HTMLResponse
 
 router = APIRouter(include_in_schema=False)
@@ -104,10 +101,30 @@ async def root(request: Request) -> HTMLResponse:
     return HTMLResponse(content=_ROOT_HTML_TEMPLATE.format(version=version))
 
 
+_SCALAR_HTML_TEMPLATE = """\
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{title}</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <script
+    id="api-reference"
+    data-url="{openapi_url}"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+</body>
+</html>"""
+
+
 @router.get("/scalar", response_class=HTMLResponse)
 async def scalar_ui(request: Request) -> HTMLResponse:
     """Serve the Scalar interactive API explorer."""
-    return get_scalar_api_reference(
-        openapi_url=str(request.app.openapi_url),
-        title=request.app.title,
+    return HTMLResponse(
+        content=_SCALAR_HTML_TEMPLATE.format(
+            title=request.app.title,
+            openapi_url=str(request.app.openapi_url),
+        )
     )
