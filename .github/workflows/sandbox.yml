@@ -36,10 +36,10 @@ jobs:
       environment: 'DEV'
       projectName: 'minha-api'
       imageName: 'minha-api'
-      registryUsername: 'greennexus-core'   # org no GHCR
+      registryUsername: 'felipementel'   # org no GHCR
     secrets:
       GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-      GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+      REGISTRY_PAT: ${{ secrets.REGISTRY_PAT }}
 
   deploy:
     needs: [build]
@@ -49,7 +49,7 @@ jobs:
       environment: 'DEV'
       tagVersion: ${{ needs.build.outputs.tag-version }}
       imageName: 'minha-api'
-      registryUsername: 'greennexus-core'
+      registryUsername: 'felipementel'
       azureRgBase: ${{ vars.AZURE_RG }}
       acaeBaseName: ${{ vars.AZURE_ACAE_BASE }}
     secrets:
