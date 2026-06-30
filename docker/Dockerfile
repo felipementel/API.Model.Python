@@ -4,7 +4,7 @@
 # dependencies before copying real source code.
 # This layer is only invalidated when pyproject.toml changes.
 # ──────────────────────────────────────────────────────────────
-FROM python:3.14-slim AS deps
+FROM python:3.14-alpine AS deps
 
 WORKDIR /build
 
@@ -32,23 +32,14 @@ RUN pip install --no-cache-dir \
 
 # ──────────────────────────────────────────────────────────────
 # Stage 3 – minimal runtime image
-# Receives only the installed packages; no pip, no build tools.
+# Alpine does not include perl, ncurses-bin, ncurses-base,
+# and uses its own sqlite/ncurses packages without the CVEs
+# present in the Debian slim variant.
 # ──────────────────────────────────────────────────────────────
-FROM python:3.14-slim AS runtime
+FROM python:3.14-alpine AS runtime
 
-# Remove packages not needed by uvicorn/fastapi that carry unpatched CVEs.
-# perl-base:   CVE-2026-42496 (CRITICAL), CVE-2026-8376 (CRITICAL),
-#              CVE-2026-42497/48962/9538 (HIGH) — Perl is not needed at all.
-# ncurses-bin: CVE-2025-69720 (HIGH) — CLI utilities, not the runtime lib.
-# ncurses-base: CVE-2025-69720 (HIGH) — terminfo data, not required for a server.
-RUN apt-get purge -y --allow-remove-essential --auto-remove \
-      perl-base \
-      ncurses-bin \
-      ncurses-base && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN groupadd -r appgroup && \
-    useradd -r -g appgroup appuser
+RUN addgroup -S appgroup && \
+    adduser -S appuser -G appgroup
 
 WORKDIR /app
 
