@@ -1,8 +1,9 @@
 """FastAPI application factory for the Usuarios API."""
 
+from importlib.metadata import version
+
 import uvicorn
 from fastapi import FastAPI
-from importlib.metadata import version
 
 _version = version("usuarios-api")
 
