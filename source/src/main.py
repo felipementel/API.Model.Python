@@ -5,8 +5,6 @@ from importlib.metadata import version
 import uvicorn
 from fastapi import FastAPI
 
-_version = version("usuarios-api")
-
 from adapters.inbound.http.routes.health import router as health_router
 from adapters.inbound.http.routes.root import router as root_router
 from adapters.inbound.http.routes.users import router as users_router
@@ -14,6 +12,8 @@ from adapters.outbound.repositories.in_memory_user_repository import (
     InMemoryUserRepository,
 )
 from application.services.user_service import UserService
+
+_version = version("usuarios-api")
 
 
 def build_user_service() -> UserService:
