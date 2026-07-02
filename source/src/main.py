@@ -2,6 +2,9 @@
 
 import uvicorn
 from fastapi import FastAPI
+from importlib.metadata import version
+
+_version = version("usuarios-api")
 
 from adapters.inbound.http.routes.health import router as health_router
 from adapters.inbound.http.routes.root import router as root_router
@@ -22,7 +25,7 @@ def create_app(user_service: UserService | None = None) -> FastAPI:
     """Create and configure the FastAPI application instance."""
     app = FastAPI(
         title="Usuarios API",
-        version="0.1.0",
+        version=_version,
         description="CRUD de usuarios com persistencia em memoria.",
     )
     app.state.user_service = user_service or build_user_service()
@@ -36,4 +39,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
