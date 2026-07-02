@@ -1,3 +1,6 @@
+# Python
+tests/
+
 # Virtual environments
 .venv/
 venv/
