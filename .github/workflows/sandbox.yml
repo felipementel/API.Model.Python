@@ -36,6 +36,7 @@ jobs:
       environment: 'DEV'
       projectName: 'minha-api'
       imageName: 'minha-api'
+      openapiFolder: 'open-api'
       registryUsername: 'felipementel'   # org no GHCR
     secrets:
       GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
