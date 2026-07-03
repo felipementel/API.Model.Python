@@ -129,6 +129,25 @@ Com o ambiente virtual ativo:
 pytest --cov=src --cov-report=term-missing
 ```
 
+## Pre-checks antes do commit
+
+Na raiz do repositorio, execute a verificacao de vulnerabilidades com Trivy:
+
+```powershell
+trivy fs --scanners vuln --format table --dependency-tree .
+```
+
+Dentro da pasta `source`, os mesmos checks de qualidade executados pelo CI sao:
+
+```powershell
+py -3.14 -m isort --check-only --settings-path ./pyproject.toml ./src
+py -3.14 -m black --check --config ./pyproject.toml ./src
+py -3.14 -m flake8 --toml-config ./pyproject.toml ./src
+$env:MYPYPATH = './src'
+py -3.14 -m mypy --config-file ./pyproject.toml ./src
+py -3.14 -m bandit -c ./pyproject.toml -r ./src
+```
+
 Resultado esperado no estado atual do projeto:
 
 - testes unitarios do servico
@@ -151,7 +170,7 @@ Configuracao atual:
 Executar:
 
 ```powershell
-black src tests
+black --config pyproject.toml src
 ```
 
 ### isort
@@ -166,7 +185,7 @@ Configuracao atual:
 Executar:
 
 ```powershell
-isort src tests
+isort --settings-path pyproject.toml src
 ```
 
 ### mypy
@@ -183,7 +202,7 @@ Configuracao atual:
 Executar:
 
 ```powershell
-mypy src
+mypy --config-file pyproject.toml src
 ```
 
 ### Instalar ferramentas de qualidade
