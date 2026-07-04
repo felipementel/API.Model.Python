@@ -97,7 +97,7 @@ _ROOT_HTML_TEMPLATE = """\
 @router.get("/", response_class=HTMLResponse)
 async def root(request: Request) -> HTMLResponse:
     """Serve the API landing page with links to docs and health probes."""
-    version = getattr(request.app, "version", "0.1.0")
+    version = getattr(request.app, "version", "unknown")
     return HTMLResponse(content=_ROOT_HTML_TEMPLATE.format(version=version))
 
 
