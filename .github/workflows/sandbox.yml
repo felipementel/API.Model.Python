@@ -24,7 +24,6 @@ on:
       environments:
         description: "Selecione o ambiente de implantação"
         required: true
-        default: 'DEV'
         type: environment
 
 
@@ -33,7 +32,7 @@ jobs:
     uses: felipementel/reusable-workflows/.github/workflows/python-sandbox-api-build.yml@main
     with:
       buildMode: 'Build + Push'
-      environment: 'DEV'
+      environment: 'development'
       projectName: 'minha-api'
       imageName: 'minha-api'
       openapiFolder: 'open-api'
@@ -47,7 +46,7 @@ jobs:
     if: needs.build.outputs.image-exists == 'false'
     uses: felipementel/reusable-workflows/.github/workflows/python-sandbox-api-deploy-aca.yml@main
     with:
-      environment: 'DEV'
+      environment: 'development'
       tagVersion: ${{ needs.build.outputs.tag-version }}
       imageName: 'minha-api'
       registryUsername: 'felipementel'
