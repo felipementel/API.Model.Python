@@ -34,5 +34,5 @@ jobs:
 
       - name: Run tests
         run: |
-          mkdir -p test-results
-          pytest --cov=src --cov-report=term-missing --junitxml=test-results/pytest.xml
+          mkdir -p tests/results
+          uv run pytest --cov=src --cov-report=term-missing --cov-report=xml:tests/results/coverage.xml --junitxml=tests/results/pytest.xml
