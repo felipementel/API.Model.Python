@@ -1,0 +1,71 @@
+name: Python Dev Environment Matrix CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  dev-matrix:
+    name: Dev Restore & Test (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: UV
+            manager: uv
+          - name: PIP
+            manager: pip
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      # -------------------------------------------------------------
+      # 1. Restore do ambiente de desenvolvimento (uv vs pip)
+      # -------------------------------------------------------------
+      - name: Setup uv
+        if: matrix.manager == 'uv'
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Restore Dev Environment (UV)
+        if: matrix.manager == 'uv'
+        working-directory: source
+        run: |
+          uv sync --extra dev
+
+      - name: Restore Dev Environment (PIP)
+        if: matrix.manager == 'pip'
+        working-directory: source
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+
+      # -------------------------------------------------------------
+      # 2. Executar testes no ambiente restaurado
+      # -------------------------------------------------------------
+      - name: Run Tests (UV)
+        if: matrix.manager == 'uv'
+        working-directory: source
+        run: |
+          mkdir -p tests/results
+          uv run pytest --cov=src --cov-report=term-missing --cov-report=xml:tests/results/coverage.xml --junitxml=tests/results/pytest.xml
+
+      - name: Run Tests (PIP)
+        if: matrix.manager == 'pip'
+        working-directory: source
+        run: |
+          mkdir -p tests/results
+          python -m pytest --cov=src --cov-report=term-missing --cov-report=xml:tests/results/coverage.xml --junitxml=tests/results/pytest.xml
