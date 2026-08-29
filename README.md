@@ -122,7 +122,7 @@ desenvolvimento:
 
 ```bash
 uv python install 3.14
-uv sync --extra dev
+uv sync --project source --extra dev --active
 ```
 
 ### Executar a API
@@ -214,11 +214,11 @@ Caso prefira utilizar o fluxo tradicional com `pip` e `venv`, execute dentro da 
 ### Passos rapidos (Linux / macOS / Bash)
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -e .[dev]
-python src/main.py
+python3 -m venv source/.venv
+source ./source/.venv/bin/activate
+python3 -m pip install --upgrade pip
+pip install -e "./source[dev]"
+python3 source/src/main.py
 ```
 
 ### Passo a passo detalhado
@@ -228,13 +228,13 @@ python src/main.py
 No Linux / macOS (Bash):
 
 ```bash
-python -m venv .venv
+python3 -m venv source/.venv
 ```
 
 No Windows (PowerShell):
 
 ```powershell
-py -3.14 -m venv .venv
+py -3.14 -m venv source/.venv
 ```
 
 #### 2. Ativar o ambiente virtual
@@ -242,13 +242,13 @@ py -3.14 -m venv .venv
 No Linux / macOS (Bash):
 
 ```bash
-source .venv/bin/activate
+source source/.venv/bin/activate
 ```
 
 No Windows (PowerShell):
 
 ```powershell
-.\.venv\Scripts\Activate.ps1
+.\source\.venv\Scripts\Activate.ps1
 ```
 
 Se o PowerShell bloquear a execucao de scripts, rode uma vez:
