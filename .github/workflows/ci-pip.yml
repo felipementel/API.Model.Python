@@ -23,16 +23,12 @@ jobs:
         with:
           python-version: '3.14'
 
-      # - name: Install dependencies
-      #   run: |
-      #     python -m pip install --upgrade pip
-      #     pip install -e .[dev]
-
-      - uses: astral-sh/setup-uv@v7
-
-      - run: uv sync --extra dev
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
 
       - name: Run tests
         run: |
           mkdir -p tests/results
-          uv run pytest --cov=src --cov-report=term-missing --cov-report=xml:tests/results/coverage.xml --junitxml=tests/results/pytest.xml
+          python -m pytest --cov=src --cov-report=term-missing --cov-report=xml:tests/results/coverage.xml --junitxml=tests/results/pytest.xml
