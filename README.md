@@ -62,14 +62,22 @@ src
 
 ## Pre-requisitos
 
-- Windows com PowerShell
 - Python 3.14 instalado
-- `py -3.14` disponivel no terminal
+- Linux, macOS ou Windows (PowerShell/Bash)
+- `python` ou `py -3.14` disponivel no terminal
 
 Para validar a instalacao do Python:
 
+No Windows:
+
 ```powershell
 py -3.14 --version
+```
+
+No Linux ou macOS:
+
+```bash
+python3 --version
 ```
 
 ## Usando uv
@@ -190,17 +198,56 @@ docker run --rm -p 8080:8080 usuarios-api
 
 O `uv` e usado apenas durante o build e nao e incluido na imagem final.
 
-## Como rodar o projeto
+### Criar a imagem Docker com pip
 
-### 1. Criar o ambiente virtual
+Execute os comandos na raiz do repositorio:
 
-No PowerShell, dentro da pasta do projeto:
+```bash
+docker buildx build -f docker/Dockerfile-pip -t usuarios-api-pip .
+docker run --rm -p 8080:8080 usuarios-api-pip
+```
+
+## Como rodar o projeto com pip e venv
+
+Caso prefira utilizar o fluxo tradicional com `pip` e `venv`, execute dentro da pasta `source`:
+
+### Passos rapidos (Linux / macOS / Bash)
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+python app.py
+```
+
+> **Nota:** No projeto atual, caso nao possua um `requirements.txt`, voce pode instalar as dependencias via `pyproject.toml` usando `pip install -e .[dev]`, e o ponto de entrada principal e `python src/main.py`.
+
+### Passo a passo detalhado
+
+#### 1. Criar o ambiente virtual
+
+No Linux / macOS (Bash):
+
+```bash
+python -m venv .venv
+```
+
+No Windows (PowerShell):
 
 ```powershell
 py -3.14 -m venv .venv
 ```
 
-### 2. Ativar o ambiente virtual
+#### 2. Ativar o ambiente virtual
+
+No Linux / macOS (Bash):
+
+```bash
+source .venv/bin/activate
+```
+
+No Windows (PowerShell):
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
@@ -212,24 +259,30 @@ Se o PowerShell bloquear a execucao de scripts, rode uma vez:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-### 3. Instalar dependencias
+#### 3. Instalar dependencias
 
-```powershell
+```bash
 python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Ou diretamente pelo `pyproject.toml` com dependencias de desenvolvimento:
+
+```bash
 pip install -e .[dev]
 ```
 
-### 4. Subir a API localmente
+#### 4. Subir a API localmente
 
 Opcao 1, executando diretamente o arquivo principal:
 
-```powershell
-py -3.14 .\src\main.py
+```bash
+python src/main.py
 ```
 
 Opcao 2, usando Uvicorn com recarga automatica:
 
-```powershell
+```bash
 uvicorn main:app --app-dir src --reload
 ```
 
@@ -245,7 +298,7 @@ Com a API em execucao, abra:
 
 Com o ambiente virtual ativo:
 
-```powershell
+```bash
 pytest --cov=src --cov-report=term-missing
 ```
 
