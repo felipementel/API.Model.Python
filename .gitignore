@@ -5,7 +5,6 @@ tests/
 .venv/
 venv/
 env/
-uv.lock
 
 # Python cache and bytecode
 __pycache__/

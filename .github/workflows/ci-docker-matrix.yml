@@ -15,10 +15,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: standard
+          - name: uv
             dockerfile: docker/Dockerfile
             image-tag: usuarios-api:uv
-          - name: fast-uv
+          - name: pip
             dockerfile: docker/Dockerfile-pip
             image-tag: usuarios-api:pip
 
