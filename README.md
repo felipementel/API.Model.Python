@@ -217,11 +217,9 @@ Caso prefira utilizar o fluxo tradicional com `pip` e `venv`, execute dentro da 
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-pip install -r requirements.txt
-python app.py
+pip install -e .[dev]
+python src/main.py
 ```
-
-> **Nota:** No projeto atual, caso nao possua um `requirements.txt`, voce pode instalar as dependencias via `pyproject.toml` usando `pip install -e .[dev]`, e o ponto de entrada principal e `python src/main.py`.
 
 ### Passo a passo detalhado
 
@@ -263,13 +261,13 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 ```bash
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+pip install -e .[dev]
 ```
 
-Ou diretamente pelo `pyproject.toml` com dependencias de desenvolvimento:
+Para instalar apenas as dependencias de producao:
 
 ```bash
-pip install -e .[dev]
+pip install .
 ```
 
 #### 4. Subir a API localmente
