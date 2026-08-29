@@ -1,0 +1,38 @@
+name: Python CI UV
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: source
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python 3.14
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+
+      # - name: Install dependencies
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     pip install -e .[dev]
+
+      - uses: astral-sh/setup-uv@v7
+
+      - run: uv sync --extra dev
+
+      - name: Run tests
+        run: |
+          mkdir -p tests/results
+          uv run pytest --cov=src --cov-report=term-missing --cov-report=xml:tests/results/coverage.xml --junitxml=tests/results/pytest.xml

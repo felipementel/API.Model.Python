@@ -1,41 +1,24 @@
-# ──────────────────────────────────────────────────────────────
-# Stage 1 – dependency cache
-# Uses a stub src/ so pip resolves and installs runtime
-# dependencies before copying real source code.
-# This layer is only invalidated when pyproject.toml changes.
-# ──────────────────────────────────────────────────────────────
-FROM python:3.14-alpine AS deps
+# syntax=docker/dockerfile:1
 
-WORKDIR /build
+# Keep uv in the build stage; the runtime image only receives the virtualenv.
+FROM ghcr.io/astral-sh/uv:0.8.22 AS uv
 
-RUN pip install --no-cache-dir --upgrade pip
+FROM python:3.14-alpine AS builder
 
-COPY pyproject.toml .
+COPY --from=uv /uv /uvx /bin/
 
-RUN mkdir -p src && \
-    touch src/__init__.py && \
-    pip install --no-cache-dir --prefix=/install . && \
-    rm -rf src
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
 
-# ──────────────────────────────────────────────────────────────
-# Stage 2 – install application code (no deps, already cached)
-# Only re-runs when src/ changes.
-# ──────────────────────────────────────────────────────────────
-FROM deps AS builder
+WORKDIR /app
 
-COPY src ./src
+# Install locked runtime dependencies before copying source for better caching.
+COPY source/pyproject.toml source/uv.lock README.md ./
+RUN uv sync --frozen --no-dev --no-install-project
 
-RUN pip install --no-cache-dir \
-      --prefix=/install \
-      --no-deps \
-      .
+COPY source/src ./src
+RUN uv sync --frozen --no-dev --no-editable
 
-# ──────────────────────────────────────────────────────────────
-# Stage 3 – minimal runtime image
-# Alpine does not include perl, ncurses-bin, ncurses-base,
-# and uses its own sqlite/ncurses packages without the CVEs
-# present in the Debian slim variant.
-# ──────────────────────────────────────────────────────────────
 FROM python:3.14-alpine AS runtime
 
 RUN addgroup -S appgroup && \
@@ -43,7 +26,9 @@ RUN addgroup -S appgroup && \
 
 WORKDIR /app
 
-COPY --from=builder /install /usr/local
+COPY --from=builder --chown=appuser:appgroup /app/.venv /app/.venv
+
+ENV PATH="/app/.venv/bin:$PATH"
 
 USER appuser
 

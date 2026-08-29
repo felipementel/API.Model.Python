@@ -2,6 +2,9 @@
 .github
 target/
 *.md
+!README.md
+.venv/
+**/.venv/
 .gitignore
 .idea/
 *.iml

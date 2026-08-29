@@ -20,6 +20,8 @@ O projeto foi pensado para estudo de deploy no Kubernetes, por isso inclui:
 - Pytest Cov
 - Black
 - isort
+- flake8
+- bandit
 - mypy
 
 ## Modelo de dominio
@@ -69,6 +71,124 @@ Para validar a instalacao do Python:
 ```powershell
 py -3.14 --version
 ```
+
+## Usando uv
+
+Instale o `uv` caso ele ainda nao esteja disponivel.
+
+No Windows com PowerShell:
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+No Linux ou macOS:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+e depois execute
+
+
+```bash
+source "$HOME/.local/bin/env"
+```
+
+Valide a instalacao:
+
+```bash
+uv --version
+```
+
+Os comandos abaixo devem ser executados dentro da pasta `source`:
+
+```bash
+cd source
+```
+
+### Preparar o ambiente
+
+Instalar o Python 3.14 e sincronizar as dependencias da aplicacao e de
+desenvolvimento:
+
+```bash
+uv python install 3.14
+uv sync --extra dev
+```
+
+### Executar a API
+
+Com recarga automatica durante o desenvolvimento:
+
+```bash
+uv run uvicorn main:app --app-dir src --reload
+```
+
+Ou executando o arquivo principal diretamente, na porta 8080:
+
+```bash
+uv run python src/main.py
+```
+
+### Executar os testes
+
+```bash
+uv run pytest
+uv run pytest --cov=src --cov-report=term-missing
+```
+
+### Formatar o codigo
+
+```bash
+uv run isort --settings-path pyproject.toml src
+uv run black --config pyproject.toml src
+```
+
+### Executar os checks de qualidade
+
+```bash
+uv run isort --check-only --settings-path pyproject.toml src
+uv run black --check --config pyproject.toml src
+uv run flake8 --toml-config pyproject.toml src
+uv run mypy --config-file pyproject.toml src
+uv run bandit -c pyproject.toml -r src
+```
+
+### Gerenciar dependencias
+
+```bash
+# Adicionar ou remover uma dependencia da aplicacao
+uv add nome-do-pacote
+uv remove nome-do-pacote
+
+# Adicionar uma dependencia opcional ao grupo dev
+uv add --optional dev nome-do-pacote
+
+# Atualizar o lockfile e sincronizar o ambiente
+uv lock
+uv lock --upgrade
+uv sync --upgrade
+
+# Visualizar a arvore de dependencias
+uv tree
+```
+
+> **Atencao:** o `pyproject.toml` declara `readme = "README.md"`, mas este
+> arquivo esta um nivel acima da pasta `source`. Se `uv sync` falhar ao instalar
+> o projeto, ajuste esse caminho ou disponibilize um README dentro de `source`.
+
+### Criar a imagem Docker com uv
+
+O Dockerfile usa `uv sync --frozen` e o `uv.lock` para instalar somente as
+dependencias de producao. Execute os comandos na raiz do repositorio:
+
+```bash
+docker buildx build -f docker/Dockerfile -t usuarios-api .
+docker run --rm -p 8080:8080 usuarios-api
+```
+
+O `uv` e usado apenas durante o build e nao e incluido na imagem final.
 
 ## Como rodar o projeto
 
@@ -391,3 +511,5 @@ Instalar dependencias novamente:
 ```powershell
 pip install -e .[dev]
 ```
+
+trivy fs --scanners vuln --format table --dependency-tree .
